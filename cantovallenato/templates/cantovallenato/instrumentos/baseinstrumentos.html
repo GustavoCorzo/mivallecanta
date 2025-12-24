@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'src/css/main.css' %}">
+    
+    {% block title %}
+    
+    {% endblock %}!Vallenato canta vallenato
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Vallenato canta vallenato</h1>
+            <div id="sidebar">          
+                
+                {% block sidebar %}    
+                <nav class="navbar">
+                    <div class="container">
+                        <a href="#" class="navbar">Mi Valle</a>
+                        <div class="collapse">
+                            <ul>
+                                <li><a href="#">Agrupaciones vallenatas</a></li>
+                                <li><a href="#">Nueva agrupación</a></li>
+                                <li><a href="#">Albumes de vallenatos</a></li>
+                                <li><a href="#">Nuevo album</a></li>
+                            </ul>
+                        </div>
+                        
+                    </div>
+                </nav>
+                {% endblock sidebar %}
+            </div>
+        </div>
+        </header>
+    <main>
+        {% block main %}
+        {% endblock main %}
+    </main>
+    <footer>        
+        {% block footer %}
+        <!-- Place footer here -->
+         <p>&copy; 2024  - Vallenato canta vallenato. Todos los derechos reservados</p>
+        {% endblock footer%}
+    </footer>
+        
+    
+</body>
+</html>

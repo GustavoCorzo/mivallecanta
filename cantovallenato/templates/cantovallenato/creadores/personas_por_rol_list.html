@@ -1,0 +1,73 @@
+{% extends 'basecanto.html' %}
+{% load crispy_forms_tags %}
+{% load tailwind_filters %}
+{% block title %} Personas por rol {% endblock title %}|El universo del  vallenato
+
+{% block main %}
+<div class="container max-w-4xl mx-auto bg-white p-6 shadow-md rounded-md">
+
+    {% if lugar == "Todos" %}
+        <h2 class="text-xl font-bold mb-4">Listado de {{ rol|capfirst }}s</h2>
+    {% else %}
+        <h2 class="text-xl font-bold mb-4">Listado de {{ rol|capfirst }}s nacidos en {{ lugar|capfirst }}</h2>
+    {% endif %}
+
+    <p>Seleccione una población y pulse filtrar para mirar la lista de sus compositores nativos</p>
+
+    <form method="get" action='' class="mb-4">    
+        <label for="lugar" class="mr-2">
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg">Filtrar por Lugar de nacimiento:</button>
+            
+        </label>
+        <select name="lugar" id="lugar" onchange="this.form.submit()" class="border rounded px-2 py-1">
+            <option value="todos" {% if lugar == "todos" %}selected{% endif %}>Todos</option>            
+            {% for lugar_item in lugares_disponibles %}
+                <option value="{{ lugar_item }}" {% if lugar_item == lugar %}selected  
+                {% endif %}>{{ lugar_item }}</option>
+            {% endfor %}        
+        </select>
+    </form>
+
+    <div class="bg-gray-100 p-8">
+        <table class="table-auto w-full border-collapse border border-gray-300">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="border border-gray-300 px-4 py-2">Nombre artístico</th> 
+            </tr>
+        </thead>
+        <tbody>
+            {% for persona in personas %} 
+
+            <tr>
+                <td class="border border-gray-300 px-4 py-2"><a href="{% url 'persona_detail' pk=persona.pk %}"> {{persona.nombre_artistico}}</a></td>                
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="border border-gray-300 px-4 py-2 text-center">No hay personas registradas.</td>
+            </tr>
+            <tr>
+                <td colspan="4" class="border border-gray-300 px-4 py-2 text-center"><a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline" href="{% url 'cantarvallenato' %}">Regresar</a>
+                </td>
+            </tr>       
+            {% endfor %}                    
+        </tbody>
+        </table>
+        <div class="mt-4 flex justify-center">
+        {% if is_paginated %}
+            <nav class="inline-flex">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 bg-gray-300 rounded-l hover:bg-gray-400">Anterior</a>
+                {% endif %}
+
+                <span class="px-3 py-1 bg-gray-200">{{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 bg-gray-300 rounded-r hover:bg-gray-400">Siguiente</a>
+                {% endif %}
+            </nav>
+        {% endif %}
+        </div>
+    </div>   
+</div>
+{% endblock main %}        
+
