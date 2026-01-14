@@ -15,7 +15,7 @@ python manage.py migrate
 npx tailwindcss -i ./static/src/input.css -o ./static/css/output.css --minify
 
 # Arrancar servidor con Gunicorn
-gunicorn mivallecanta.wsgi:application
+gunicorn mivalle_main.wsgi:application
 
 #Otorga permisos de ejecución:
 chmod +x build.sh
