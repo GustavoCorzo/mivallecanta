@@ -39,7 +39,8 @@ ENVIRONMENT = env("ENVIRONMENT", default="development")
 # SECURITY WARNING: don't run with debug turned on in production!
 SECRET_KEY = config("DJANGO_SECRET_KEY") 
 DEBUG = config("DJANGO_DEBUG", default=False, cast=bool) 
-ALLOWED_HOSTS = config("DJANGO_ALLOWED_HOSTS", default='127.0.0.1,localhost').split(',')
+
+ALLOWED_HOSTS = ["mivallecanta.onrender.com"]
 
 # Hosts permitidos
 #if ENVIRONMENT == 'production':
