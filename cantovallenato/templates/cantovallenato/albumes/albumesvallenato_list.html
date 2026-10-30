@@ -1,4 +1,4 @@
-{% extends 'basecanto.html' %}
+{% extends "interpretesdelvallenato/baseinterpretes.html" %}
 
 
 {% block title %}
@@ -32,9 +32,18 @@ Listado de albumes de canciones vallenatas
                             <td colspan="4" class="border border-gray-300 px-4 py-2 text-center">No hay albumes registrados.</td>
                         </tr>
                         <tr>
-                            <td colspan="4" class="border border-gray-300 px-4 py-2 text-center"><a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline" href="{% url 'cantarvallenato' %}">Regresar</a></td>
+                            <td colspan="4" class="border border-gray-300 px-4 py-2 text-center"><a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline" href="{% url 'agrupaciones' %}">Regresar</a></td>
                         </tr>
                     {% endfor %}
+                    <tr>
+                    <td colspan="5" class="border border-gray-300 px-4 py-2 text-center">                        
+                        <a class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg" href="{% url 'albumesvallenato_list' %}">Volver al listado</a>
+                        <a href="{% url 'albumvallenato_create' %}" 
+                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">
+                            Nuevo album
+                        </a>
+                    </td>
+                </tr>
                         
                 </tbody>
             </table>
@@ -57,9 +66,6 @@ Listado de albumes de canciones vallenatas
     </div>
 {% endblock main %}
 
-{% block footer %}
-    
-{% endblock footer %}
-    
+
     
     

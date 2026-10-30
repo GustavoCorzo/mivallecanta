@@ -9,7 +9,7 @@
 <form  method="POST">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Editar canto</button>
+    <button type="submit">Editar versión</button>
 </form>
-<a href="{% url 'versionvallenato_list' %}">Cancelar</a>  
+<a href="{% url 'versionesvallenato_list' %}">Cancelar</a>  
 {% endblock main %}

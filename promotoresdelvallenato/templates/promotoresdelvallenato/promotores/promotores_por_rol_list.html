@@ -1,0 +1,52 @@
+{% extends 'promotoresdelvallenato/basepromueve.html' %}
+{% load crispy_forms_tags %}
+{% load tailwind_filters %}
+{% load filters %}
+{% block title %} Promotores por rol {% endblock title %}|El universo del canto vallenato
+
+{% block main %}
+<div class="container max-w-4xl mx-auto bg-white p-6 shadow-md rounded-md">    
+        <h2 class="text-xl font-bold mb-4">Listado de {{ rol|pluralize_rol}}</h2> 
+    <div class="bg-gray-100 p-8">
+        <table class="table-auto w-full border-collapse border border-gray-300">
+        <thead>
+            <tr class="bg-gray-200">
+                <th class="border border-gray-300 px-4 py-2">Nombre, apodo, seudónimo</th> 
+            </tr>
+        </thead>
+        <tbody>
+            {% for promotor in promotores %} 
+
+            <tr>
+                <td class="border border-gray-300 px-4 py-2"><a href="{% url 'promotor_detail' pk=promotor.pk %}"> {{promotor.nombre_apodo_seudonimo}}</a></td>                
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" class="border border-gray-300 px-4 py-2 text-center">No hay {{ rol|pluralize_rol}} registrados.</td>
+            </tr>
+            <tr>
+                <td colspan="4" class="border border-gray-300 px-4 py-2 text-center"><a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline" href="{% url 'promotores' %}">Regresar</a>
+                </td>
+            </tr>       
+            {% endfor %}                    
+        </tbody>
+        </table>
+        <div class="mt-4 flex justify-center">
+        {% if is_paginated %}
+            <nav class="inline-flex">
+                {% if page_obj.has_previous %}
+                    <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 bg-gray-300 rounded-l hover:bg-gray-400">Anterior</a>
+                {% endif %}
+
+                <span class="px-3 py-1 bg-gray-200">{{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+                {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 bg-gray-300 rounded-r hover:bg-gray-400">Siguiente</a>
+                {% endif %}
+            </nav>
+        {% endif %}
+        </div>
+    </div>   
+</div>
+{% endblock main %}        
+

@@ -23,11 +23,13 @@ from cantovallenato.views import HomePageView
 urlpatterns = [
     path("admin/", admin.site.urls),
     path('', HomePageView.as_view(), name='home'),    
-    #path("", include("cantovallenato.urls")),
+    path("", include("mivalle_core.urls")),
     path('cantares/', include("cantovallenato.urls")),
     path('cultura/', include('culturadelvallenato.urls')),
     path('festivales/', include('festivalesdelvallenato.urls')),
     path('promotores/', include('promotoresdelvallenato.urls')),
     path('territorio/', include("territoriodelvallenato.urls")),
-    #path('conjuntos/', include("agrupacionesvallenato.urls")), 
+    path('agrupaciones/', include("interpretesdelvallenato.urls")), 
+    path('accounts/', include('django.contrib.auth.urls')),
+    
 ]+  static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

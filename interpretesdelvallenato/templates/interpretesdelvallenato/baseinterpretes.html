@@ -1,0 +1,47 @@
+{% load static %}
+{% load crispy_forms_tags %}
+{% load tailwind_filters %}
+<!-- Plantilla correcta: /media/gustavo/WEB/MiValleCanta/interpretesdelvallenato/templates/interpretesdelvallenato/baseinterpretes.html -->
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>
+            {% block title %} {% endblock %}|El univeso del canto Vallenato
+        </title>
+        
+        <link rel="stylesheet" href="{% static 'src/css/main.css' %}">    
+               
+    
+    </head>
+    <body class="bg-blue-100 dark text-blue-900 p-4">
+        <header>
+            <div class="bg-orange-600 p-4 shadow-lg">
+                <h1 class="mx-auto text-3xl font-bold text-center text-white">El universo del canto vallenato</h1>            
+            </div>            
+            <!-- place navbar here -->
+            
+            {% include "interpretesdelvallenato/navbar.html" %}
+
+            <!-- end component navbar -->
+        </header>
+        <main class="container py-8 px-4 mx-center">
+            {% block main %}
+            {% endblock main %}            
+        </main>
+        <footer class="bg-yellow-100 text-center p-4 mt-8">
+        <div class="bg-gray-800 p-4">
+            <div class="container mx-auto text-center">     
+                <p class="text-white">El universo del Vallenato - Con amor desde el Cesar Colombia — {% now "Y" %}</p>
+                 {% block footer %}
+                 <p class="text-white">Desarrollado por: GUSTAVO RODOLFO CORZO OCHOA</p>
+                 {% endblock %}
+                
+            </div>
+        </div>    
+        </footer> 
+        <script src="{% static 'src/js/main.js' %}"></script>
+        <script src="{% static 'src/js/flowbite.min.js' %}"></script>
+    </body>
+</html>

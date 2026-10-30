@@ -5,16 +5,19 @@ Eliminar Creador
 {% endblock title %}
 
 {% block main %}
-<h2 class="text-xl text-center font-semibold mb-4">Eliminar Creador de Vallenato</h2>
-<form  method="POST">
-    {% csrf_token %}    
+<div class="container mx-auto p-6 bg-white rounded shadow">
+    <h2 class="text-xl text-center font-semibold mb-4">Eliminar creador de cantos vallenatos</h2>
     <p>¿Estás seguro de que deseas eliminar a "{{ object.nombre_artistico }}"?</p>
-    <input type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline" value="Si, eliminar">
-    <p>Esta acción eliminará permanentemente al creador de Vallenato y no podrá deshacerse.</p>
-    <br>    
-    <a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline" href="{% url 'persona_detail' object.id %}">Cancelar</a>
-    <a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline" href="{% url 'cantarvallenato' %}">Regresar</a>
-</form>
-<br>
-<p></p> 
+    <form  method="POST">
+        {% csrf_token %}    
+        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
+            Sí, eliminar
+        </button> 
+        <p>Esta acción eliminará permanentemente al creador de cantos vallenato y no podrá deshacerse.</p>
+        <br>    
+    
+        <a href="{% url 'personas_por_rol_list' %}"
+        class="bg-gray-300 hover:bg-gray-400 text-black font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline" >Cancelar</a>
+    </form> 
+</div>
 {% endblock main %}

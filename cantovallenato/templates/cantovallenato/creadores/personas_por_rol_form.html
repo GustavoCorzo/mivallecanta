@@ -4,27 +4,79 @@
 {% load static %}
 {% block title %}
 Nuevo creador de Vallenato
-{% endblock %}|Vallenato canta vallenato
+{% endblock %}
 
 {% block sidebar %}
 {% endblock sidebar %}
 
 {% block main %}
-
     <div class="container px-4 max-w-lg mx-auto bg-white p-6 rounded-md shadow-md">
-        <h2 class="text-xl text-center font-semibold mb-4">Nuevo creador de música vallenata</h2>
-        <form  method="post" enctype="multipart/form-data" class="space-y-4">
+        <h2 class="text-xl text-center font-semibold mb-4">{% if object %}Editar creador de música vallenata{% else %}Nuevo creador de música vallenata{% endif %}</h2>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li class="bg-green-200 text-green-800 px-4 py-2 rounded-lg mb-2">
+                    {{ message }}
+                </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        <form   method="post" enctype="multipart/form-data"         
+                class="space-y-6">
             {% csrf_token %}
-            <div>
-                {{ form|crispy }}
-            </div>
-            <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
-            <input type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline" value="Guardar">
 
-            <a class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg" href="{% url 'cantarvallenato' %}">Regresar</a>
-        </div>                      
+            <!-- Campos normales con crispy -->
+            {{ form.nombres|as_crispy_field }}
+            {{ form.apellidos|as_crispy_field }}
+            {{ form.formacion_academica|as_crispy_field }}
+            {{ form.nombre_artistico|as_crispy_field }}
+            {{ form.anio_nace|as_crispy_field }}
+            {{ form.lugar_nace|as_crispy_field }}
+            {{ form.lugar_muere|as_crispy_field }}
+            {{ form.imagen|as_crispy_field }}
+            
+            <!-- Roles como chips seleccionables -->
+             <div class="mb-6">
+                <label class="block text-gray-700 font-bold mb-2">Roles</label>
+                <div class="flex flex-wrap gap-6">
+                    {% for checkbox in form.roles %}
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        {{ checkbox.tag }}
+                        <span class="px-4 py-2 rounded-full border border-gray-300       
+                                    peer-checked:bg-blue-600 peer-checked:text-white 
+                                    peer-checked:border-blue-600
+                                    transition-colors duration-200">
+                            {{ checkbox.choice_label }}
+                        </span>
+                    </label>
+                    {% endfor %}
+                </div>
+             </div>
+
+            <div class="flex justify-between mt-6">
+                 <!-- Hack para que Tailwind no purgue bg-blue-600 -->
+                <div class="hidden bg-blue-600 bg-gray-500">
+
+                </div>
+                <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4  gap-2">             
+                    <button type="submit" 
+                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline">
+                        {% if object %}Guardar cambios{% else %}Nuevo creador{% endif %}
+                    </button> 
+                    <a href="{% url 'personas_por_rol_list' %}" 
+                        class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg">
+                            Volver al listado
+                    </a>
+
+                </div> 
+            </div>                      
         </form>
-           <br>           
+
+        {% if form.errors %}
+            <div class="errors">
+                {{ form.errors }}
+            </div>
+        {% endif %}          
         
         {% if img_obj %} 
           <h3 class="text-green-600 font-semibold text-lg">Successfully uploaded: {{img_obj.title}}</h3>
@@ -35,5 +87,3 @@ Nuevo creador de Vallenato
     </div>
 <br>
 {% endblock main %}
-{% block footer %}
-{% endblock footer%}

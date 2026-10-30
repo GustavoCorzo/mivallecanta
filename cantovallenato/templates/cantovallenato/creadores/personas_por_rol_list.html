@@ -1,26 +1,35 @@
 {% extends 'basecanto.html' %}
 {% load crispy_forms_tags %}
 {% load tailwind_filters %}
-{% block title %} Personas por rol {% endblock title %}|El universo del  vallenato
+{% load filters %}
+{% block title %}Creadores por rol {% endblock title %}
 
 {% block main %}
 <div class="container max-w-4xl mx-auto bg-white p-6 shadow-md rounded-md">
+    {% if messages %}
+    <ul class="messages">
+      {% for message in messages %}
+        <li class="bg-green-200 text-green-800 px-4 py-2 rounded-lg mb-2">
+          {{ message }}
+        </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
 
-    {% if lugar == "Todos" %}
-        <h2 class="text-xl font-bold mb-4">Listado de {{ rol|capfirst }}s</h2>
+    {% if lugar|lower == "todos" %}
+        <h2 class="text-xl font-bold mb-4">Listado de {{ rol|pluralize_rol|capfirst }}</h2>
     {% else %}
-        <h2 class="text-xl font-bold mb-4">Listado de {{ rol|capfirst }}s nacidos en {{ lugar|capfirst }}</h2>
+        <h2 class="text-xl font-bold mb-4">Listado de {{ rol|pluralize_rol|capfirst }} nacidos en {{ lugar|capfirst }}</h2>
     {% endif %}
 
     <p>Seleccione una población y pulse filtrar para mirar la lista de sus compositores nativos</p>
 
     <form method="get" action='' class="mb-4">    
         <label for="lugar" class="mr-2">
-            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg">Filtrar por Lugar de nacimiento:</button>
-            
+            <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg">Filtrar por Lugar de nacimiento:</button>            
         </label>
         <select name="lugar" id="lugar" onchange="this.form.submit()" class="border rounded px-2 py-1">
-            <option value="todos" {% if lugar == "todos" %}selected{% endif %}>Todos</option>            
+            <option value="todos" {% if lugar|lower == "todos" %}selected{% endif %}>Todos</option>            
             {% for lugar_item in lugares_disponibles %}
                 <option value="{{ lugar_item }}" {% if lugar_item == lugar %}selected  
                 {% endif %}>{{ lugar_item }}</option>
@@ -45,13 +54,20 @@
             <tr>
                 <td colspan="4" class="border border-gray-300 px-4 py-2 text-center">No hay personas registradas.</td>
             </tr>
+                 
+            {% endfor %}
             <tr>
-                <td colspan="4" class="border border-gray-300 px-4 py-2 text-center"><a class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline" href="{% url 'cantarvallenato' %}">Regresar</a>
-                </td>
-            </tr>       
-            {% endfor %}                    
+                    <td colspan="5" class="border border-gray-300 px-4 py-2 text-center">                        
+                        <a class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded-lg" href="{% url 'personas_por_rol_list' %}">Volver al listado</a>
+                        <a href="{% url 'persona_create' %}" 
+                            class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">
+                            Nuevo creador
+                        </a>
+                    </td>
+                </tr>                    
         </tbody>
         </table>
+        
         <div class="mt-4 flex justify-center">
         {% if is_paginated %}
             <nav class="inline-flex">

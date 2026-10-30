@@ -40,14 +40,14 @@ ENVIRONMENT = env("ENVIRONMENT", default="development")
 SECRET_KEY = config("DJANGO_SECRET_KEY") 
 DEBUG = config("DJANGO_DEBUG", default=False, cast=bool) 
 
-ALLOWED_HOSTS = ["mivallecanta.onrender.com"]
+# ALLOWED_HOSTS = ["mivallecanta.onrender.com"]
 
 # Hosts permitidos
-#if ENVIRONMENT == 'production':
-    #ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS',
-    #'mivallecanta.onrender.com').split(',')
-#else:
-    #ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+if ENVIRONMENT == 'production':
+    ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS',
+    'mivallecanta.onrender.com').split(',')
+else:
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 # Application definition
 INSTALLED_APPS = [
@@ -61,22 +61,25 @@ INSTALLED_APPS = [
     "cantovallenato.apps.CantovallenatoConfig",
     "culturadelvallenato.apps.CulturadelvallenatoConfig",
     "festivalesdelvallenato.apps.FestivalesdelvallenatoConfig",
+    "interpretesdelvallenato.apps.InterpretesdelvallenatoConfig",
+    "mivalle_core.apps.MivalleCoreConfig",
     "promotoresdelvallenato.apps.PromotoresdelvallenatoConfig",
     "territoriodelvallenato.apps.TerritoriodelvallenatoConfig",
     "crispy_forms",
-    "crispy_tailwind",    
+    "crispy_tailwind",
+    "widget_tweaks",    
 ]
-CRISPY_TEMPLATE_PACK = "tailwind"
 CRISPY_ALLOWED_TEMPLATE_PACKS = "tailwind"
+CRISPY_TEMPLATE_PACK = "tailwind"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
@@ -85,7 +88,11 @@ ROOT_URLCONF = "mivalle_main.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / 'templates'],
+        "DIRS": [
+            BASE_DIR / "promotoresdelvallenato/templates",
+            BASE_DIR / "interpretesdelvallenato/templates",
+            BASE_DIR / 'templates'
+            ],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -106,7 +113,7 @@ WSGI_APPLICATION = "mivalle_main.wsgi.application"
 
 DATABASES = {
     "default": dj_database_url.config(
-        default="postgresql://postgres:19TavoCorzo50@127.0.0.1:5432/mivallecantaDB"
+        default="postgresql://postgres:19TavoCorzo50@127.0.0.1:5432/mivallecantadb"
     )
 }
 
@@ -181,3 +188,27 @@ if os.environ.get("RENDER"):
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
+
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/'   # a dónde enviar al usuario después de iniciar sesión
+LOGOUT_REDIRECT_URL = '/'  # a dónde enviar después de cerrar sesión
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': '/var/log/mi_servidor.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}

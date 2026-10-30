@@ -2,9 +2,10 @@ from django.db import models
 from django.urls import reverse
 from django.db.models import UniqueConstraint
 from django.db.models.functions import Lower
+from mivalle_core.models import AgrupacionMusical
 from PIL import Image
 import uuid
-
+"""
 class Role(models.Model): 
     COMPOSITOR = 'compositor' 
     ACORDEONERO = 'acordeonero' 
@@ -75,8 +76,7 @@ class Persona(models.Model):
 
     def __str__(self):
         return self.nombre_artistico  
-
-
+"""    
 class RitmoVallenato(models.Model):
     nombre = models.CharField(max_length=10, null=True, blank=True)
     def __str__(self):
@@ -86,7 +86,7 @@ class CantoVallenato(models.Model):
     """Modelo que representa un canto vallenato (pero no una versión específica de ese canto)"""
 
     titulo = models.CharField(max_length=100)
-    compositor = models.ForeignKey('Persona', on_delete=models.CASCADE, null=True)
+    compositor = models.ForeignKey('mivalle_core.Persona', on_delete=models.CASCADE, null=True)
     #Se usa ForeignKey porque un canto normalmente tiene un sólo compositor, pero un compositor puede tener múltiĺes cantos
     ritmo = models.ForeignKey('RitmoVallenato', on_delete=models.CASCADE, null=True)
 
@@ -94,11 +94,11 @@ class CantoVallenato(models.Model):
 
     def __str__(self):
         
-        return f"{self.titulo} {self.compositor} {self.ritmo}"
+        return  self.titulo or "Sin título"
     
     def get_absolute_url(self):        
         return reverse('canto-detalle', kwargs={'pk': self.pk})
-    
+"""   
 class AgrupacionMusical(models.Model):
     razon_social = models.CharField(max_length=150)
     acordeonero = models.ForeignKey('Persona', on_delete=models.CASCADE, null=True, blank=True,related_name='agrupaciones_acordeonero')
@@ -111,24 +111,28 @@ class AgrupacionMusical(models.Model):
 
     def __str__(self):
         return f'{self.razon_social}'
-    
+"""
 class AlbumVallenato(models.Model):
     cancion = models.ForeignKey('CantoVallenato', on_delete=models.SET_NULL, null=True)
     titulo = models.CharField(max_length=100)
-    agrupacion = models.ForeignKey('AgrupacionMusical', on_delete=models.SET_NULL, null=True)
+    agrupacion = models.ForeignKey('mivalle_core.AgrupacionMusical', on_delete=models.SET_NULL, null=True)
     anio_graba = models.CharField(max_length=4, null=True, blank=True)
     isbn = models.CharField('ISBN', max_length=13, unique=True, null=True, blank=True)
 
     class Meta: ordering = ["anio_graba"]
 
     def __str__(self):
-        return f'{self.cancion}, {self.titulo}, {self.agrupacion}'   
+        return self.titulo or "Sin álbum"  
 
 class VersionVallenato(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4)
     cancion = models.ForeignKey('CantoVallenato', on_delete=models.SET_NULL, null=True)
     album = models.ForeignKey('AlbumVallenato', on_delete=models.SET_NULL, null=True)
-    interprete = models.ForeignKey('AgrupacionMusical', on_delete=models.SET_NULL, null=True)
+    interprete = models.ForeignKey('mivalle_core.AgrupacionMusical', on_delete=models.SET_NULL, null=True)
+    
     def __str__(self):
-
-        return f'{self.cancion.titulo}, {self.album.titulo}' 
+        cancion = self.cancion.titulo if self.cancion else "Sin canción"
+        album = self.album.titulo if self.album else "Sin álbum"
+        interprete = self.interprete.razon_social if self.interprete else "Sin intérprete"
+        return f"{cancion} - {album} - {interprete}"
+         

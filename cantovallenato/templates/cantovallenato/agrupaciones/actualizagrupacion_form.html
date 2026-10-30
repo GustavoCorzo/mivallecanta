@@ -1,15 +1,20 @@
-{% extends 'basecanto.html' %}
-
+{% extends "interpretesdelvallenato/baseinterpretes.html" %}
+{% load crispy_forms_tags %}
+{% load tailwind_filters %}
 {% block title %}
     Editar agrupación Vallenata
 {% endblock title %}
 
 {% block main %}
-<h3>Editar agrupación vallenata</h3>
-<form  method="POST">
+<h3>Editar información de una agrupación vallenata</h3>
+<form  method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Editar agrupación</button>
+    {{ form|crispy }}
+    <button type="submit" 
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline">
+        Guardar cambios
+    </button>
+    <a href="{% url 'agrupacionesvallenato_list' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline">Cancelar</a>  
 </form>
-<a href="{% url 'versionvallenato_list' %}">Cancelar</a>  
+
 {% endblock main %}

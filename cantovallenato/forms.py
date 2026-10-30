@@ -1,6 +1,7 @@
 from crispy_forms.helper import FormHelper
 from django import forms
-from .models import CantoVallenato, AgrupacionMusical, AlbumVallenato, VersionVallenato, Role, Persona
+from .models import CantoVallenato, AlbumVallenato, VersionVallenato
+from mivalle_core.models.persona import  Persona, Role
 
 class CantoVallenatoForm(forms.ModelForm):
     class Meta:
@@ -23,6 +24,7 @@ class FiltroCancionForm(forms.ModelForm):
             'ritmo': forms.TextInput(attrs={'placeholder' : 'Ritmo', 'class': 'form-input border border-gray-300 rounded-md',})}
         
 class AbstractPersonaForm(forms.ModelForm):
+    """Formulario base para Persona, no se usa directamente."""
     roles = forms.ModelMultipleChoiceField(
         queryset=Role.objects.all(), 
         widget=forms.CheckboxSelectMultiple,
@@ -33,13 +35,12 @@ class AbstractPersonaForm(forms.ModelForm):
     class Meta:
         model = Persona     
         fields = '__all__'
-        
-       # ['nombres', 'apellidos', 'formacion_academica', 'nombre_artistico', 'anio_nace', 'lugar_nace', 'lugar_muere', 'imagen', 'roles']
-
+        abstract = True   # solo conceptual, no es atributo real de Django        
+      
 class PersonasPorRolForm(AbstractPersonaForm): 
+    """Extiende AbstractPersonaForm para casos específicos."""
     class Meta(AbstractPersonaForm.Meta):
-        model = Persona
-        fields = ['nombres', 'apellidos', 'formacion_academica', 'nombre_artistico', 'anio_nace', 'lugar_nace', 'lugar_muere', 'imagen', 'roles']
+        fields = "__all__"
 
     def save(self, *args, **kwargs):
         if not self.cleaned_data.get('imagen'):
@@ -47,6 +48,7 @@ class PersonasPorRolForm(AbstractPersonaForm):
         return super().save(*args, **kwargs)
 
 class PersonaFiltroForm(forms.Form):
+    """Formulario simple para filtrar personas en vistas/listados."""
     lugar_nace = forms.CharField(
         label="Lugar de nacimiento",
         required=False,
@@ -55,46 +57,66 @@ class PersonaFiltroForm(forms.Form):
             "placeholder": "Ej. Valledupar"
         })
     )
-     
-class AgrupacionMusicalForm(forms.ModelForm):
-    class Meta:
-        model = AgrupacionMusical
-        fields = ['razon_social', 'acordeonero', 'voz_principal', 'corista_uno', 'corista_dos', 'cajero', 'guacharaquero', 'guitarrista']
-
+        
 class AlbumVallenatoForm(forms.ModelForm):
     cancion = forms.ModelChoiceField( queryset=CantoVallenato.objects.all(), required=True, label='Canción', widget=forms.Select(attrs={'class': 'form-control'}) )
 
     class Meta:
         model = AlbumVallenato
         fields = ['cancion','titulo', 'agrupacion', 'anio_graba', 'isbn']
+        labels = {
+                    'anio_graba': 'Año'
+        } 
         
     def __init__(self, *args, **kwargs):
         super().__init__ (*args, **kwargs)
         self.fields['cancion'].label_from_instance = lambda obj: obj.titulo
 
 class VersionVallenatoForm(forms.ModelForm):
-    cancion = forms.ModelChoiceField( queryset=CantoVallenato.objects.all(), required=True, label='Canción', widget=forms.Select(attrs={'class': 'form-control'}) )
+    cancion = forms.ModelChoiceField( 
+        queryset=CantoVallenato.objects.all(), 
+        required=True, label='Canción', 
+        widget=forms.Select(attrs={'class': 'form-control'}) 
+    )
 
     class Meta:
         model = VersionVallenato
         fields = ['cancion', 'album', 'interprete']
-
-    def __init__(self, *args, **kwargs):
-        super().__init__ (*args, **kwargs)
-        self.fields['cancion'].label_from_instance = lambda obj: obj.titulo
-        self.fields['album'].label_from_instance = lambda obj: obj.titulo 
-        self.fields['interprete'].label_from_instance = lambda obj: obj.razon_social  
+        widgets = {
+            'cancion': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+            'album': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+            'interprete': forms.Select(attrs={
+                'class': 'form-control'
+            }),
+        }
+    
 
 class FiltroVersionForm(forms.ModelForm):
-    cancion = forms.ModelChoiceField(queryset=CantoVallenato.objects.all(), required=False)
+    cancion = forms.ModelChoiceField(
+        queryset=CantoVallenato.objects.all(), 
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
 
     class Meta:
         model = VersionVallenato
         fields = ['cancion']
         widgets = {
-            'cancion': forms.TextInput(attrs={'class': 'form-input border border-gray-300 rounded-md',}), 
-            'album': forms.TextInput(attrs={'placeholder' : 'Album', 'class': 'form-input border border-gray-300 rounded-md',}),
-            'agrupacion': forms.TextInput(attrs={'placeholder' : 'Agrupacion','class':'form-input border border-gray-300 rounded-md',})                       
+            'cancion': forms.TextInput(attrs={
+                'class': 'form-control'
+            }), 
+            'album': forms.TextInput(attrs={
+                'placeholder' : 'Album', 
+                'class': 'form-control'
+            }),
+            'agrupacion': forms.TextInput(attrs={
+                'placeholder' : 'Agrupacion',
+                'class':'form-control'
+            })                       
         }
 
     def __init__(self, *args, **kwargs):

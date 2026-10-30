@@ -4,20 +4,12 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 from django.views.generic import ListView, DetailView, TemplateView
-from .models import CantoVallenato, Persona, AgrupacionMusical, AlbumVallenato, VersionVallenato, Role
-from .forms import CantoVallenatoForm, FiltroCancionForm, AgrupacionMusicalForm, AlbumVallenatoForm, VersionVallenatoForm, FiltroVersionForm, PersonasPorRolForm, PersonaFiltroForm
-
-# 🎶 Utilidad para pluralizar roles
-
-def pluralize_rol(rol_display):
-    if rol_display.endswith('or'):
-        return rol_display[:-2] + 'ores'
-    elif rol_display.endswith('ista'):
-        return rol_display + 's'
-    elif rol_display.endswith('e'):
-        return rol_display + 's'
-    else:
-        return rol_display + 'es'
+from mivalle_core.models.agrupacion import AgrupacionMusical
+from mivalle_core.views import PersonaFiltradaListView
+from mivalle_core.models.persona import  Persona, Role
+from .models import CantoVallenato, AlbumVallenato, VersionVallenato
+from .forms import CantoVallenatoForm, FiltroCancionForm, AlbumVallenatoForm, VersionVallenatoForm, FiltroVersionForm, PersonasPorRolForm, PersonaFiltroForm
+from mivalle_core.forms import AgrupacionMusicalForm 
 
 # 📜 Vista basada en función para listado personalizado
 def listado_personas(request):
@@ -103,143 +95,141 @@ class CantoVallenatoDeleteView(DeleteView):
     template_name = 'cantovallenato/canciones/cantovallenato_confirm_delete.html'
     success_url = reverse_lazy('cantovallenato_list')
 
-class PersonaCreateView(CreateView):
-    model = Persona
-    form_class = PersonasPorRolForm
-    template_name = 'cantovallenato/creadores/personas_por_rol_form.html'
+#class PersonaCreateView(CreateView):
+    #model = Persona
+    #form_class = PersonasPorRolForm
+    #template_name = 'cantovallenato/creadores/personas_por_rol_form.html'
 
-    def get_success_url(self):
-        rol = self.object.roles.first().name
-        return reverse_lazy('personas_por_rol_lugar', kwargs={'rol':rol,  'lugar': 'todos'})
+    #def get_success_url(self):
+        #rol = self.object.roles.first().name
+        #return reverse_lazy('personas_por_rol_lugar', kwargs={'rol':rol,  'lugar': 'todos'})
 
-class PersonaPorRolListView(ListView):
-    model = Persona
-    template_name = 'cantovallenato/creadores/personas_por_rol_list.html'
-    context_object_name = 'personas' 
-    paginate_by = 15  # Número de personas por página
+#class PersonaPorRolListView(ListView):
+    #model = Persona
+    #template_name = 'cantovallenato/creadores/#personas_por_rol_list.html'
+    #context_object_name = 'personas' 
+    #paginate_by = 15  # Número de personas por página
     
-    def get_queryset(self):        
-        rol = self.kwargs.get('rol')
-        lugar_url = self.kwargs.get('lugar')
-        lugar_query = self.request.GET.get('lugar')
+    #def get_queryset(self):        
+        #rol = self.kwargs.get('rol')
+        #lugar_url = self.kwargs.get('lugar')
+        #lugar_query = self.request.GET.get('lugar')
         
 
-        queryset = super().get_queryset()
+        #queryset = super().get_queryset()
 
-        if rol:
-           queryset = queryset.filter(roles__name__iexact=rol)
+        #if rol:
+           #queryset = queryset.filter(roles__name__iexact=rol)
 
-        lugar_final = lugar_query or lugar_url
-        if lugar_final and lugar_final.lower() != 'todos':
-            queryset = queryset.filter(lugar_nace__icontains=lugar_final) 
+        #lugar_final = lugar_query or lugar_url
+        #if lugar_final and lugar_final.lower() != 'todos':
+            #queryset = queryset.filter(lugar_nace__icontains=lugar_final) 
 
-        return queryset
+        #return queryset
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        rol = self.kwargs.get('rol')
+    #def get_context_data(self, **kwargs):
+        #context = super().get_context_data(**kwargs)
+        #rol = self.kwargs.get('rol')
         
         # Extraer lugares únicos solo para personas con ese rol
-        lugares_disponibles = Persona.objects.filter(roles__name__iexact=rol).values_list('lugar_nace', flat=True).distinct().order_by('lugar_nace')        
-        context['lugares_disponibles'] = [lugar for lugar in lugares_disponibles if lugar]
-        context['rol'] = rol
-        context['lugar'] = self.kwargs.get('lugar') 
-        return context
+        #lugares_disponibles = Persona.objects.filter#(roles__name__iexact=rol).values_list#('lugar_nace', flat=True).distinct().order_by#('lugar_nace')        
+        #context['lugares_disponibles'] = [lugar for #lugar in lugares_disponibles if lugar]
+        #context['rol'] = rol
+        #context['lugar'] = self.kwargs.get('lugar') 
+        #return context
 
  # 🎭 Vista basada en clase para paginar y filtrar personas        
-class PersonaFiltradaListView(ListView):
-    model = Persona
-    template_name = 'cantovallenato/creadores/personas_por_rol_list.html'
-    context_object_name = 'personas'
-    paginate_by = 15 # Número de personas por página
+#class PersonaFiltradaListView(ListView):
+    #model = Persona
+    #template_name = 'cantovallenato/creadores/#personas_por_rol_list.html'
+    #context_object_name = 'personas'
+    #paginate_by = 15 # Número de personas por página
 
-    def get_queryset(self):
-        rol = self.kwargs.get('rol')        
-        lugar_url = self.kwargs.get('lugar') # Desde la URL
-        lugar_query = self.request.GET.get('lugar') # Desde query string
+    #def get_queryset(self):
+        #rol = self.kwargs.get('rol')        
+        #lugar_url = self.kwargs.get('lugar') # Desde la URL
+        #lugar_query = self.request.GET.get('lugar') # Desde query string
 
-        queryset = super().get_queryset()
+        #queryset = super().get_queryset()
 
-        if rol:
-            queryset = queryset.filter(roles__name__iexact=rol)
+        #if rol:
+            #queryset = queryset.filter(roles__name__iexact=rol)
 
         # Prioriza el query string si existe
-        lugar_final = lugar_query or lugar_url
-        if lugar_final and lugar_final.lower() != 'todos':
-            queryset = queryset.filter(lugar_nace__iexact=lugar_final)
+        #lugar_final = lugar_query or lugar_url
+        #if lugar_final and lugar_final.lower() != 'todos':
+            #queryset = queryset.filter(lugar_nace__iexact=lugar_final)
         
-        return queryset
+        #return queryset
     
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        rol = self.kwargs.get('rol')
-        lugar_url = self.kwargs.get('lugar')
-        lugar_query = self.request.GET.get('lugar')
-        lugar_final = lugar_query or lugar_url
+    #def get_context_data(self, **kwargs):
+        #context = super().get_context_data(**kwargs)
+        #rol = self.kwargs.get('rol')
+        #lugar_url = self.kwargs.get('lugar')
+        #lugar_query = self.request.GET.get('lugar')
+        #lugar_final = lugar_query or lugar_url
 
-        lugares_disponibles = Persona.objects.filter(
-            roles__name__iexact=rol
-        ).values_list('lugar_nace', flat=True).distinct().order_by('lugar_nace')
+        #lugares_disponibles = Persona.objects.filter(
+            #roles__name__iexact=rol
+        #).values_list('lugar_nace', flat=True).distinct().order_by('lugar_nace')
         
-        context.update({
-            'lugares_disponibles': [lugar for lugar in lugares_disponibles if lugar],
-            'rol' : rol,
-            'lugar': lugar_final.capitalize() if lugar_final else 'Todos',
-        })
+        #context.update({
+            #'lugares_disponibles': [lugar for lugar in lugares_disponibles if lugar],
+            #'rol' : rol,
+            #'lugar': lugar_final.capitalize() if lugar_final else 'Todos',
+        #})
 
-        return context
+        #return context
 
-class PersonaDetailView(DetailView):
-    model = Persona
-    template_name = 'cantovallenato/creadores/persona_detail.html' 
-    context_object_name = 'persona' 
+#class PersonaDetailView(DetailView):
+    #model = Persona
+    #template_name = 'cantovallenato/creadores/#persona_detail.html' 
+    #context_object_name = 'persona' 
             
-class PersonaUpdateView(UpdateView):
-    model = Persona
-    form_class = PersonasPorRolForm
-    template_name = 'cantovallenato/creadores/actualizacreador_form.html'
-    success_url = reverse_lazy('cantarvallenato')
-    def form_valid(self, form):
-        if 'imagen' in form.changed_data:
-            return super().form_valid(form)
-        else:
-            form.instance.imagen = self.object.imagen
-        return super().form_valid(form)
+#class PersonaUpdateView(UpdateView):
+    #model = Persona
+    #form_class = PersonasPorRolForm
+    #template_name = 'cantovallenato/creadores/#actualizacreador_form.html'
+    #success_url = reverse_lazy('cantarvallenato')
+    #def form_valid(self, form):
+        #if 'imagen' in form.changed_data:
+            #return super().form_valid(form)
+        #else:
+            #form.instance.imagen = self.object.imagen
+        #return super().form_valid(form)
 
-class PersonaDeleteView(DeleteView):
-    model = Persona
-    template_name = 'cantovallenato/creadores/creador_confirm_delete.html'
-    success_url = reverse_lazy('cantarvallenato')
+#class PersonaDeleteView(DeleteView):
+    #model = Persona
+    #template_name = 'cantovallenato/creadores/#creador_confirm_delete.html'
+    #success_url = reverse_lazy('cantarvallenato')
 
+#class AgrupacionMusicalCreateView(CreateView):
+    #model = AgrupacionMusical
+    #form_class = AgrupacionMusicalForm    
+    #template_name = 'cantovallenato/agrupaciones/agrupacionvallenato_form.html'
+    #success_url = reverse_lazy('agrupacionesvallenato_list')
 
-class AgrupacionMusicalCreateView(CreateView):
-    model = AgrupacionMusical
-    form_class = AgrupacionMusicalForm    
-    template_name = 'cantovallenato/agrupaciones/agrupacionvallenato_form.html'
-    success_url = reverse_lazy('agrupacionesvallenato_list')
+#class AgrupacionMusicalListView(ListView):
+    #model = AgrupacionMusical
+    #template_name = 'cantovallenato/agrupaciones/agrupacionesvallenato_list.html'
+    #context_object_name = 'agrupaciones' 
+    #paginate_by = 15   
 
-class AgrupacionMusicalListView(ListView):
-    model = AgrupacionMusical
-    template_name = 'cantovallenato/agrupaciones/agrupacionesvallenato_list.html'
-    context_object_name = 'agrupaciones' 
-    paginate_by = 10   
+#class AgrupacionMusicalDetailView(DetailView):
+    #model = AgrupacionMusical
+    #template_name = 'cantovallenato/agrupaciones/agrupacionvallenato_detail.html'
+    #context_object_name = 'agrupacion'
 
-class AgrupacionMusicalDetailView(DetailView):
-    model = AgrupacionMusical
-    template_name = 'cantovallenato/agrupaciones/agrupacionvallenato_detail.html'
-    context_object_name = 'agrupacion'
+#class AgrupacionMusicalUpdateView(UpdateView):
+    #model = AgrupacionMusical
+    #form_class = AgrupacionMusicalForm
+    #template_name = 'cantovallenato/agrupaciones/agrupacionvallenato_form.html'
+    #success_url = reverse_lazy('agrupacionesvallenato_list')
 
-class AgrupacionMusicalUpdateView(UpdateView):
-    model = AgrupacionMusical
-    form_class = AgrupacionMusicalForm
-    template_name = 'cantovallenato/agrupaciones/agrupacionvallenato_form.html'
-    success_url = reverse_lazy('agrupacionesvallenato_list')
-
-class AgrupacionMusicalDeleteView(DeleteView):
-    model = AgrupacionMusical
-    template_name = 'cantovallenato/agrupaciones/agrupacionvallenato_confirm_delete.html'
-    success_url = reverse_lazy('agrupacionesvallenato_list')
-
+#class AgrupacionMusicalDeleteView(DeleteView):
+    #model = AgrupacionMusical
+    #template_name = 'cantovallenato/agrupaciones/agrupacionvallenato_confirm_delete.html'
+    #success_url = reverse_lazy('agrupacionesvallenato_list')
 
 class AlbumVallenatoCreateView(CreateView):
     model = AlbumVallenato
@@ -251,7 +241,7 @@ class AlbumVallenatoListView(ListView):
     model = AlbumVallenato
     template_name = 'cantovallenato/albumes/albumesvallenato_list.html'
     context_object_name = 'albumes' 
-    paginate_by = 10   
+    paginate_by = 15   
 
 class AlbumVallenatoDetailView(DetailView):
     model = AlbumVallenato
@@ -260,8 +250,8 @@ class AlbumVallenatoDetailView(DetailView):
 
 class AlbumVallenatoUpdateView(UpdateView):
     model = AlbumVallenato
-    form_class = VersionVallenatoForm
-    template_name = 'cantovallenato/albumes/albumvallenato_form.html'
+    form_class = AlbumVallenatoForm 
+    template_name = 'cantovallenato/albumes/actualizalbum_form.html'
     success_url = reverse_lazy('albumesvallenato_list')
 
 class AlbumVallenatoDeleteView(DeleteView):
@@ -280,7 +270,7 @@ class VersionVallenatoListView(ListView):
     model = VersionVallenato
     template_name = 'cantovallenato/versiones/versionesvallenato_list.html'
     context_object_name = 'versiones'
-    paginate_by = 10 
+    paginate_by = 15 
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -292,7 +282,10 @@ class VersionVallenatoListView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['form'] = FiltroVersionForm(self.request.GET or None)
+        form = FiltroVersionForm(self.request.GET or None)   # aquí sí defines form
+        context['form'] = form
+        if form.is_valid():
+            context['cancion'] = form.cleaned_data.get('cancion')
         return context
 
 class VersionVallenatoDetailView(DetailView):
