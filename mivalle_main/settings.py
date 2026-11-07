@@ -111,9 +111,12 @@ WSGI_APPLICATION = "mivalle_main.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+print("DATABASE_URL =", os.environ.get("DATABASE_URL"))
+
 DATABASES = {
-    "default": dj_database_url.config(
-        default="postgresql://postgres:19TavoCorzo50@127.0.0.1:5432/mivallecantadb"
+    "default": dj_database_url.parse(
+        os.environ.get("DATABASE_URL")
+    
     )
 }
 
