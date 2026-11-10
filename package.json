@@ -5,7 +5,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "npx @tailwindcss/cli -i tw_dev/input.css -o static/src/css/main.css --watch",
-    "prod": "npx @tailwindcss/cli -i tw_dev/input.css -o static/src/css/main.css --minify"  
+    "prod": "npm run prod"  
   },
   "keywords": [],
   "author": "",
