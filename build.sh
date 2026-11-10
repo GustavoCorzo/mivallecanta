@@ -6,10 +6,10 @@ set -o errexit
 pip install -r requirements.txt
 
 # Instalar última versión de npm
-npm install
+#npm install
 
 # Compilar TailwindCSS
-npm run prod
+#npm run prod
 
 # Convert static asset files
 python manage.py collectstatic --no-input
