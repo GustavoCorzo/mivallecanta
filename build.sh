@@ -8,11 +8,11 @@ pip install -r requirements.txt
 # Instalar última versión de npm
 npm install
 
+# Compilar TailwindCSS
+npm run prod
+
 # Convert static asset files
 python manage.py collectstatic --no-input
 
 # Apply any outstanding database migrations
 python manage.py migrate
-
-# Compilar TailwindCSS
-npm run prod
