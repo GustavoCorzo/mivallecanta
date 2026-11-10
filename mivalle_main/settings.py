@@ -43,11 +43,14 @@ DEBUG = config("DJANGO_DEBUG", default=False, cast=bool)
 # ALLOWED_HOSTS = ["mivallecanta.onrender.com"]
 
 # Hosts permitidos
-if ENVIRONMENT == 'production':
-    ALLOWED_HOSTS = os.getenv('DJANGO_ALLOWED_HOSTS',
-    'mivallecanta.onrender.com').split(',')
-else:
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = os.getenv(
+    'DJANGO_ALLOWED_HOSTS',
+    '127.0.0.1', 'localhost','mivallecanta.onrender.com'
+    ).split(',')
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://mivallecanta.onrender.com",
+]
 
 # Application definition
 INSTALLED_APPS = [
